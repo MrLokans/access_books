@@ -89,7 +89,11 @@ for post in posts:
                     break
 
             if not found_folder:
+<<<<<<< HEAD
                 os.chdir("Другое")
+=======
+                os.chdir('Другое')
+>>>>>>> parent of 09baf06... Fix folder names for win
                 cur_dir = os.getcwd()
 
 
