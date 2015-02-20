@@ -7,11 +7,10 @@ import os
 
 file = open('books.json', 'r')
 text = file.read()
-# converting string to dictionary
 posts = ast.literal_eval(text)
 
 
-# downloading file with status bar
+# downloading file with statusvbar
 def download(url, file_name):
     u = urllib2.urlopen(url)
     f = open(file_name, 'wb')
@@ -36,18 +35,18 @@ def download(url, file_name):
 
 # query is simple filter for text of post, queryMatch is RegEx filter for text of post, queryMatchNot is Regex antifilter
 folders = [
-    {"title": "Алгоритмы_и_структуры_данных", "query": "", "queryMatch": "(Алгоритм|структуры данных)", "queryMatchNot": ""},
-    {"title": "Дискретная_математика", "query": "", "queryMatch": "(Дискрет|[ ]Граф(ах|ы| |ов))", "queryMatchNot": ""},
-    {"title": "Информационная_безопасность", "query": "", "queryMatch": "([ ]крипто|защищ|безопасност|хакинг)", "queryMatchNot": ""},
+    {"title": "Алгоритмы и структуры данных", "query": "", "queryMatch": "(Алгоритм|структуры данных)", "queryMatchNot": ""},
+    {"title": "Дискретная математика", "query": "", "queryMatch": "(Дискрет|[ ]Граф(ах|ы| |ов))", "queryMatchNot": ""},
+    {"title": "Информационная безопасность", "query": "", "queryMatch": "([ ]крипто|защищ|безопасност|хакинг)", "queryMatchNot": ""},
     {"title": "C++", "query": "", "queryMatch": "(С\\+\\+|C\\+\\+|С\\+\\+11|C\\+\\+11|cpp|cpp11)", "queryMatchNot": "(Node|на языке Java|языка программирования Java|\.NET)"},
     {"title": "C", "query": "", "queryMatch": "([ ]Си[ \/]|язык С[\+]|язык программирования C[^\+\#]|#си|#c[ ]|#с[ ]|Программирование на Си|язык программирования С[^\+#])", "queryMatchNot": ""},
     {"title": "Java", "query": "Java", "queryMatch": "", "queryMatchNot": ""},
     {"title": "Python", "query": "Python", "queryMatch": "", "queryMatchNot": ""},
     {"title": "PHP", "query": "", "queryMatch": "(PHP|РНР)", "queryMatchNot": ""},
-    {"title": "Ruby_&_Ruby_On_Rails", "query": "Ruby", "queryMatch": "", "queryMatchNot": ""},
+    {"title": "Ruby & Ruby On Rails", "query": "Ruby", "queryMatch": "", "queryMatchNot": ""},
     {"title": "JavaScript", "query": "", "queryMatch": "(JavaScript|js)", "queryMatchNot": "([ ]1С|OC Windows Server|jsp)"},
-    {"title": "Разработка_для_Android", "query": "", "queryMatch": "(Android|Андройд|Андроид)", "queryMatchNot": ""},
-    {"title": "Разработка_для_Apple", "query": "", "queryMatch": "(Swift|Objective-C|iOS)", "queryMatchNot": "Spider"},
+    {"title": "Разработка для Android", "query": "", "queryMatch": "(Android|Андройд|Андроид)", "queryMatchNot": ""}, 
+    {"title": "Разработка для Apple", "query": "", "queryMatch": "(Swift|Objective-C|iOS)", "queryMatchNot": "Spider"},
     {"title": "Другое", "query": "", "queryMatch": "", "queryMatchNot": ""}
 ];
 
@@ -89,11 +88,7 @@ for post in posts:
                     break
 
             if not found_folder:
-<<<<<<< HEAD
-                os.chdir("Другое")
-=======
                 os.chdir('Другое')
->>>>>>> parent of 09baf06... Fix folder names for win
                 cur_dir = os.getcwd()
 
 
