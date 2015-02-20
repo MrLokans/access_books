@@ -7,16 +7,17 @@ import os
 
 file = open('books.json', 'r')
 text = file.read()
+# converting string to dictionary
 posts = ast.literal_eval(text)
 
 
-# downloading file with statusvbar
+# downloading file with status bar
 def download(url, file_name):
     u = urllib2.urlopen(url)
     f = open(file_name, 'wb')
     meta = u.info()
-    file_size = int(meta.getheaders("Content-Length")[0])
-    print "Downloading: %s Bytes: %s" % (file_name, file_size)
+    file_size = int(meta.getheaders(u"Content-Length")[0])
+    print u"Downloading: %s Bytes: %s" % (file_name, file_size)
 
     file_size_dl = 0
     block_sz = 8192
@@ -35,19 +36,19 @@ def download(url, file_name):
 
 # query is simple filter for text of post, queryMatch is RegEx filter for text of post, queryMatchNot is Regex antifilter
 folders = [
-    {"title": "Алгоритмы и структуры данных", "query": "", "queryMatch": "(Алгоритм|структуры данных)", "queryMatchNot": ""},
-    {"title": "Дискретная математика", "query": "", "queryMatch": "(Дискрет|[ ]Граф(ах|ы| |ов))", "queryMatchNot": ""},
-    {"title": "Информационная безопасность", "query": "", "queryMatch": "([ ]крипто|защищ|безопасност|хакинг)", "queryMatchNot": ""},
-    {"title": "C++", "query": "", "queryMatch": "(С\\+\\+|C\\+\\+|С\\+\\+11|C\\+\\+11|cpp|cpp11)", "queryMatchNot": "(Node|на языке Java|языка программирования Java|\.NET)"},
-    {"title": "C", "query": "", "queryMatch": "([ ]Си[ \/]|язык С[\+]|язык программирования C[^\+\#]|#си|#c[ ]|#с[ ]|Программирование на Си|язык программирования С[^\+#])", "queryMatchNot": ""},
-    {"title": "Java", "query": "Java", "queryMatch": "", "queryMatchNot": ""},
-    {"title": "Python", "query": "Python", "queryMatch": "", "queryMatchNot": ""},
-    {"title": "PHP", "query": "", "queryMatch": "(PHP|РНР)", "queryMatchNot": ""},
-    {"title": "Ruby & Ruby On Rails", "query": "Ruby", "queryMatch": "", "queryMatchNot": ""},
-    {"title": "JavaScript", "query": "", "queryMatch": "(JavaScript|js)", "queryMatchNot": "([ ]1С|OC Windows Server|jsp)"},
-    {"title": "Разработка для Android", "query": "", "queryMatch": "(Android|Андройд|Андроид)", "queryMatchNot": ""}, 
-    {"title": "Разработка для Apple", "query": "", "queryMatch": "(Swift|Objective-C|iOS)", "queryMatchNot": "Spider"},
-    {"title": "Другое", "query": "", "queryMatch": "", "queryMatchNot": ""}
+    {u"title": u"Алгоритмы_и_структуры_данных", u"query": "", u"queryMatch": "(Алгоритм|структуры данных)", u"queryMatchNot": ""},
+    {u"title": u"Дискретная_математика", u"query": "", u"queryMatch": "(Дискрет|[ ]Граф(ах|ы| |ов))", u"queryMatchNot": ""},
+    {u"title": u"Информационная_безопасность", u"query": "", u"queryMatch": "([ ]крипто|защищ|безопасност|хакинг)", u"queryMatchNot": ""},
+    {u"title": u"C++", u"query": "", u"queryMatch": "(С\\+\\+|C\\+\\+|С\\+\\+11|C\\+\\+11|cpp|cpp11)", u"queryMatchNot": "(Node|на языке Java|языка программирования Java|\.NET)"},
+    {u"title": u"C", u"query": "", u"queryMatch": "([ ]Си[ \/]|язык С[\+]|язык программирования C[^\+\#]|#си|#c[ ]|#с[ ]|Программирование на Си|язык программирования С[^\+#])", u"queryMatchNot": ""},
+    {u"title": u"Java", u"query": u"Java", u"queryMatch": "", u"queryMatchNot": ""},
+    {u"title": u"Python", u"query": u"Python", u"queryMatch": "", u"queryMatchNot": ""},
+    {u"title": u"PHP", u"query": "", u"queryMatch": "(PHP|РНР)", u"queryMatchNot": ""},
+    {u"title": u"Ruby_&_Ruby_On_Rails", u"query": u"Ruby", u"queryMatch": "", u"queryMatchNot": ""},
+    {u"title": u"JavaScript", u"query": "", u"queryMatch": "(JavaScript|js)", u"queryMatchNot": "([ ]1С|OC Windows Server|jsp)"},
+    {u"title": u"Разработка_для_Android", u"query": "", u"queryMatch": "(Android|Андройд|Андроид)", u"queryMatchNot": ""},
+    {u"title": u"Разработка_для_Apple", u"query": "", u"queryMatch": "(Swift|Objective-C|iOS)", u"queryMatchNot": u"Spider"},
+    {u"title": u"Другое", u"query": "", u"queryMatch": "", u"queryMatchNot": ""}
 ];
 
 # creating folders
@@ -75,12 +76,12 @@ for post in posts:
         if isbook:
             for folder in folders:
                 if folder['query'] != "":
-                    if re.search('(^|[ \(\)\.\,\!\?"])' + folder['query'] + '([ \(\)\,\!\?"]|$)', post['text']):
+                    if len(re.split('(^|[ \(\)\.\,\!\?"])' + folder['query'] + '([ \(\)\,\!\?"]|$)', post['text'])) != 1:
                         os.chdir(folder['title'])
                         cur_dir = os.getcwd()
                         found_folder = True
                 elif folder['queryMatch'] != "":
-                    if re.search(folder['queryMatch'], post['text']) and not re.search(folder['queryMatchNot'], post['text']):
+                    if len(re.split(folder['queryMatch'], post['text'])) != 1 and len(re.split(folder['queryMatchNot'], post['text'])) == 1:
                         os.chdir(folder['title'])
                         cur_dir = os.getcwd()
                         found_folder = True
@@ -88,7 +89,7 @@ for post in posts:
                     break
 
             if not found_folder:
-                os.chdir('Другое')
+                os.chdir(u"Другое")
                 cur_dir = os.getcwd()
 
 
