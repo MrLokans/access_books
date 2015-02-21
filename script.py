@@ -114,7 +114,7 @@ for post in posts:
                 for attch in attchs:
                     if attch['type'] == 'doc':
                         # downloading book
-                        download(attch['doc']['url'], attch['doc']['title'])
+                        download(attch['doc']['url'], attch['doc']['title'] + "." + attch['doc']['ext'])
                     elif attch['type'] == 'photo':
                         # downloading  preview image
                         download(attch['photo']['src_big'], 'preview.jpg')
