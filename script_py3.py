@@ -4,12 +4,15 @@ import urllib.request, urllib.error, urllib.parse
 import re
 import os
 
-file = open('books.json', 'r')
+# TODO with statment
+file = open('books.json', 'r', encoding='utf-8')
 text = file.read()
 # converting string to dictionary
+# TODO replace eval with json parser
 posts = eval(text)
 
 
+# TODO with statment
 # downloading file with status bar
 def download(url, file_name):
     u = urllib.request.urlopen(url)
@@ -20,6 +23,7 @@ def download(url, file_name):
 
     f.close()
 
+# TODO move to separate file or DB
 # query is simple filter for text of post, queryMatch is RegEx filter for text of post, queryMatchNot is Regex antifilter
 folders = [
     {"title": "Алгоритмы_и_структуры_данных", "query": "", "queryMatch": "(Алгоритм|структуры данных)", "queryMatchNot": ""},
@@ -37,15 +41,17 @@ folders = [
     {"title": "Другое", "query": "", "queryMatch": "", "queryMatchNot": ""}
 ];
 
+# XXX why?
 # creating folders
 try:
     for folder in folders:
         os.mkdir(folder['title'])
 except:
-    pass
+    raise
 
 cur_dir = os.getcwd()
 
+# TODO REFACTOR TO FUCKOUT
 for post in posts:
     post.setdefault('attachments', 0)
     attchs = post['attachments']
@@ -90,7 +96,7 @@ for post in posts:
                 try:
                     os.mkdir(folder_name)
                 except:
-                    pass
+                    raise
 
                 os.chdir(folder_name)
                 changed_dir = True
@@ -107,7 +113,7 @@ for post in posts:
                     elif attch['type'] == 'link':
                         # adding link
                         readme = readme, '\n Ccылка: ', attch['link']['title'], ' ', attch['link']['url']
-                    textfile = open('readme.txt', 'w')
+                    textfile = open('readme.txt', 'w', encoding='utf-8')
                     textfile.write(readme)
                 os.chdir('..')
                 cur_dir = os.getcwd()
@@ -118,3 +124,5 @@ for post in posts:
                 os.chdir('..')
                 if changed_dir:
                     os.chdir('..')
+
+                raise
