@@ -5,7 +5,7 @@ import ast
 import re
 import os
 
-file = open('books2.json', 'r')
+file = open('books.json', 'r')
 text = file.read()
 # converting string to dictionary
 posts = ast.literal_eval(text)
