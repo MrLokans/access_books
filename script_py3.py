@@ -3,13 +3,19 @@
 import urllib.request, urllib.error, urllib.parse
 import re
 import os
+import json
 
-file = open('books.json', 'r')
+# TODO with statement
+# ???
+file = open('books.json', 'r', encoding='utf-8')
 text = file.read()
 # converting string to dictionary
-posts = eval(text)
+# DONE replace eval with json parser
+posts = json.loads(text)
 
 
+# TODO with statement
+# ???
 # downloading file with status bar
 def download(url, file_name):
     u = urllib.request.urlopen(url)
@@ -20,32 +26,26 @@ def download(url, file_name):
 
     f.close()
 
+# DONE move to separate file or DB
 # query is simple filter for text of post, queryMatch is RegEx filter for text of post, queryMatchNot is Regex antifilter
-folders = [
-    {"title": "Алгоритмы_и_структуры_данных", "query": "", "queryMatch": "(Алгоритм|структуры данных)", "queryMatchNot": ""},
-    {"title": "Дискретная_математика", "query": "", "queryMatch": "(Дискрет|[ ]Граф(ах|ы| |ов))", "queryMatchNot": ""},
-    {"title": "Информационная_безопасность", "query": "", "queryMatch": "([ ]крипто|защищ|безопасност|хакинг)", "queryMatchNot": ""},
-    {"title": "C++", "query": "", "queryMatch": "(С\\+\\+|C\\+\\+|С\\+\\+11|C\\+\\+11|cpp|cpp11)", "queryMatchNot": "(Node|на языке Java|языка программирования Java|\.NET)"},
-    {"title": "C", "query": "", "queryMatch": "([ ]Си[ \/]|язык С[\+]|язык программирования C[^\+\#]|#си|#c[ ]|#с[ ]|Программирование на Си|язык программирования С[^\+#])", "queryMatchNot": ""},
-    {"title": "Java", "query": "Java", "queryMatch": "", "queryMatchNot": ""},
-    {"title": "Python", "query": "Python", "queryMatch": "", "queryMatchNot": ""},
-    {"title": "PHP", "query": "", "queryMatch": "(PHP|РНР)", "queryMatchNot": ""},
-    {"title": "Ruby_&_Ruby_On_Rails", "query": "Ruby", "queryMatch": "", "queryMatchNot": ""},
-    {"title": "JavaScript", "query": "", "queryMatch": "(JavaScript|js)", "queryMatchNot": "([ ]1С|OC Windows Server|jsp)"},
-    {"title": "Разработка_для_Android", "query": "", "queryMatch": "(Android|Андройд|Андроид)", "queryMatchNot": ""},
-    {"title": "Разработка_для_Apple", "query": "", "queryMatch": "(Swift|Objective-C|iOS)", "queryMatchNot": "Spider"},
-    {"title": "Другое", "query": "", "queryMatch": "", "queryMatchNot": ""}
-];
+folders_text = open('folders.json','r').read();
+folders = json.loads(folders_text)
 
 # creating folders
+# DONE creating separate folder
+# raising exception if folder are already created
 try:
+    folder_name = 'downloads'
+    os.mkdir(folder_name)
+    os.chdir(folder_name)
     for folder in folders:
         os.mkdir(folder['title'])
-except:
+except OSError:
     pass
 
 cur_dir = os.getcwd()
 
+# TODO REFACTOR TO FUCKOUT
 for post in posts:
     post.setdefault('attachments', 0)
     attchs = post['attachments']
@@ -89,7 +89,7 @@ for post in posts:
             try:
                 try:
                     os.mkdir(folder_name)
-                except:
+                except OSError:
                     pass
 
                 os.chdir(folder_name)
@@ -100,6 +100,12 @@ for post in posts:
                 for attch in attchs:
                     if attch['type'] == 'doc':
                         # downloading book
+<<<<<<< HEAD
+=======
+                        filename = attch['doc']['title']
+                        # making filename valid
+                        filename = "".join([x if x.isalnum() else "_" for x in filename])
+>>>>>>> Alkalit-master
                         download(attch['doc']['url'], attch['doc']['title'] + "." + attch['doc']['ext'])
                     elif attch['type'] == 'photo':
                         # downloading  preview image
@@ -107,7 +113,7 @@ for post in posts:
                     elif attch['type'] == 'link':
                         # adding link
                         readme = readme, '\n Ccылка: ', attch['link']['title'], ' ', attch['link']['url']
-                    textfile = open('readme.txt', 'w')
+                    textfile = open('readme.txt', 'w', encoding='utf-8')
                     textfile.write(readme)
                 os.chdir('..')
                 cur_dir = os.getcwd()
@@ -118,3 +124,5 @@ for post in posts:
                 os.chdir('..')
                 if changed_dir:
                     os.chdir('..')
+
+                raise
