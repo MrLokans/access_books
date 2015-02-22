@@ -103,7 +103,11 @@ for post in posts:
                         filename = attch['doc']['title']
                         # making filename valid
                         filename = "".join([x if x.isalnum() else "_" for x in filename])
+<<<<<<< HEAD
                         download(attch['doc']['url'], filename + "." + attch['doc']['ext'])
+=======
+                        download(attch['doc']['url'], attch['doc']['title'] + "." + attch['doc']['ext'])
+>>>>>>> 706d605afd2422691518306ec0b10ead5fdb710f
                     elif attch['type'] == 'photo':
                         # downloading  preview image
                         download(attch['photo']['src_big'], 'preview.jpg')
