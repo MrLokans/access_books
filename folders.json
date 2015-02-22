@@ -1,0 +1,76 @@
+[
+    {
+      "title": "Алгоритмы_и_структуры_данных",
+      "query": "",
+      "queryMatch": "(Алгоритм|структуры данных)",
+      "queryMatchNot": ""
+    },
+    {
+      "title": "Дискретная_математика",
+      "query": "",
+      "queryMatch": "(Дискрет|[ ]Граф(ах|ы| |ов))",
+      "queryMatchNot": ""
+    },
+    {
+      "title": "Информационная_безопасность",
+      "query": "",
+      "queryMatch": "([ ]крипто|защищ|безопасност|хакинг)", "queryMatchNot": ""
+    },
+    {
+      "title": "C++",
+      "query": "",
+      "queryMatch": "(С\\+\\+|C\\+\\+|С\\+\\+11|C\\+\\+11|cpp|cpp11)",
+      "queryMatchNot": "(Node|на языке Java|языка программирования Java|\.NET)"},
+    {
+      "title": "C",
+      "query": "",
+      "queryMatch": "([ ]Си[ \/]|язык С[\+]|язык программирования C[^\+\#]|#си|#c[ ]|#с[ ]|Программирование на Си|язык программирования С[^\+#])", "queryMatchNot": ""},
+    {
+      "title": "Java",
+      "query": "Java",
+      "queryMatch": "",
+      "queryMatchNot": ""
+    },
+    {
+      "title": "Python",
+      "query": "Python",
+      "queryMatch": "",
+      "queryMatchNot": ""
+    },
+    {
+      "title": "PHP",
+      "query": "",
+      "queryMatch": "(PHP|РНР)",
+      "queryMatchNot": ""
+    },
+    {
+      "title": "Ruby_&_Ruby_On_Rails",
+      "query": "Ruby",
+      "queryMatch": "",
+      "queryMatchNot": ""
+    },
+    {
+      "title": "JavaScript",
+      "query": "",
+      "queryMatch": "(JavaScript|js)",
+      "queryMatchNot": "([ ]1С|OC Windows Server|jsp)"
+    },
+    {
+      "title": "Разработка_для_Android",
+      "query": "",
+      "queryMatch": "(Android|Андройд|Андроид)",
+      "queryMatchNot": ""
+    },
+    {
+      "title": "Разработка_для_Apple",
+      "query": "",
+      "queryMatch": "(Swift|Objective-C|iOS)",
+      "queryMatchNot": "Spider"
+    },
+    {
+      "title": "Другое",
+      "query": "",
+      "queryMatch": "",
+      "queryMatchNot": ""
+    }
+]
