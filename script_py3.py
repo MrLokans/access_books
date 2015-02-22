@@ -10,8 +10,8 @@ import json
 file = open('books.json', 'r', encoding='utf-8')
 text = file.read()
 # converting string to dictionary
-# DONE replace eval with json parser
-posts = json.loads(text)
+# TODO replace eval with json parser
+posts = eval(text)
 
 
 # TODO with statement
@@ -29,7 +29,7 @@ def download(url, file_name):
 # DONE move to separate file or DB
 # query is simple filter for text of post, queryMatch is RegEx filter for text of post, queryMatchNot is Regex antifilter
 folders_text = open('folders.json','r').read();
-folders = json.loads(folders_text)
+folders = eval(folders_text)
 
 # creating folders
 # DONE creating separate folder
@@ -103,7 +103,7 @@ for post in posts:
                         filename = attch['doc']['title']
                         # making filename valid
                         filename = "".join([x if x.isalnum() else "_" for x in filename])
-                        download(attch['doc']['url'], attch['doc']['title'] + "." + attch['doc']['ext'])
+                        download(attch['doc']['url'], filename + "." + attch['doc']['ext'])
                     elif attch['type'] == 'photo':
                         # downloading  preview image
                         download(attch['photo']['src_big'], 'preview.jpg')
