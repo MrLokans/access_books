@@ -100,12 +100,9 @@ for post in posts:
                 for attch in attchs:
                     if attch['type'] == 'doc':
                         # downloading book
-<<<<<<< HEAD
-=======
                         filename = attch['doc']['title']
                         # making filename valid
                         filename = "".join([x if x.isalnum() else "_" for x in filename])
->>>>>>> Alkalit-master
                         download(attch['doc']['url'], attch['doc']['title'] + "." + attch['doc']['ext'])
                     elif attch['type'] == 'photo':
                         # downloading  preview image
