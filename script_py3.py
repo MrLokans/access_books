@@ -4,39 +4,55 @@ import urllib.request, urllib.error, urllib.parse
 import re
 import os
 import json
+import sys
 
-# TODO with statement
+# DONE with statement, json lib support
+with open('books.json', 'r', encoding='utf-8') as f:
+    text = f.read()
+    posts = json.loads(text)
+
+# DONE with statement, status bar
 # ???
-file = open('books.json', 'r', encoding='utf-8')
-text = file.read()
-# converting string to dictionary
-# TODO replace eval with json parser
-posts = eval(text)
-
-
-# TODO with statement
-# ???
-# downloading file with status bar
 def download(url, file_name):
     u = urllib.request.urlopen(url)
-    f = open(file_name, 'wb')
-    buffer = u.read()
-    f.write(buffer)
-    print(file_name + ' was downloaded')
 
-    f.close()
+    file_size = int(u.info()["Content-Length"])
+
+    if os.path.isfile(file_name):
+        if os.path.getsize(file_name):
+            print("File {} already exists, skipping.".format(file_name))
+            return None
+
+    chunk_size = 1024
+    chunks = file_size // chunk_size
+    chunks_downloaded = 0
+    print("Downloading {}, {} bytes.".format(file_name, file_size))
+    with open(file_name, 'wb') as f:
+        while True:
+            chunk = u.read(chunk_size)
+            percent = int(chunks_downloaded / chunks * 100)
+            sys.stdout.write('\r [{0}] {1}%'.format('#' * int(percent / 10), percent))
+            if not chunk:
+                break
+            f.write(chunk)
+            f.flush()
+            chunks_downloaded += 1
+    print()
+    print(file_name + ' was downloaded.')
 
 # DONE move to separate file or DB
 # query is simple filter for text of post, queryMatch is RegEx filter for text of post, queryMatchNot is Regex antifilter
-folders_text = open('folders.json', 'r').read()
-folders = eval(folders_text)
+with open('folders.json', 'r') as f:
+    folders_text = f.read()
+    folders = json.loads(folders_text)
 
 # creating folders
 # DONE creating separate folder
 # raising exception if folder are already created
 try:
     folder_name = 'downloads'
-    os.mkdir(folder_name)
+    if not os.path.exists(folder_name):
+        os.mkdir(folder_name)
     os.chdir(folder_name)
     for folder in folders:
         os.mkdir(folder['title'])
