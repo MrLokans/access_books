@@ -30,9 +30,8 @@ def prepare_folders(folders):
         folder_name = DOWNLOAD_FOLDER
         if not os.path.exists(folder_name):
             os.mkdir(folder_name)
-        os.chdir(folder_name)
         for folder in folders:
-            os.mkdir(folder['title'])
+            os.mkdir(os.path.join(DOWNLOAD_FOLDER, folder['title']))
     except OSError:
         pass
 
@@ -67,6 +66,33 @@ def download(url, file_name):
     print(file_name + ' was downloaded.')
 
 
+def get_foldergroup(folders_dict, post):
+    """Specifies group folder (e.g C, C++, or 'Другое') """
+    folder_group = ""
+    found_folder = False
+    for folder in folders_dict:
+        if folder['query']:
+            result_pattern = '(^|[ \(\)\.\,\!\?"])' + folder['query'] + '([ \(\)\,\!\?"]|$)'
+            is_pattern_in_text = len(re.split(result_pattern, post['text'])) != 1
+            if is_pattern_in_text:
+                folder_group = folder['title']
+                found_folder = True
+
+        elif folder['queryMatch']:
+            is_pattern_in_text = len(re.split(folder['queryMatch'], post['text'])) != 1
+            is_prohibited_pattern_absent = len(re.split(folder['queryMatchNot'], post['text'])) == 1
+            if is_pattern_in_text and is_prohibited_pattern_absent:
+                folder_group = folder['title']
+                found_folder = True
+        if found_folder:
+            break
+
+    if not found_folder:
+        folder_group = "Другое"
+
+    return folder_group
+
+
 # creating folders
 # DONE creating separate folder
 # raising exception if folder are already created
@@ -78,16 +104,14 @@ def download_books():
     folders = get_folders_info()
     prepare_folders(folders)
 
-    cur_dir = os.getcwd()
-
     # TODO REFACTOR TO FUCKOUT
     for post in posts:
         post.setdefault('attachments', 0)
         attchs = post['attachments']
 
         isbook = False
-        found_folder = False
-        changed_dir = False
+        # found_folder = False
+        # folder_group = ""
 
         if not attchs:
             continue
@@ -100,72 +124,42 @@ def download_books():
         if not isbook:
             continue
 
-        for folder in folders:
-            if folder['query']:
-                result_pattern = '(^|[ \(\)\.\,\!\?"])' + folder['query'] + '([ \(\)\,\!\?"]|$)'
-                is_pattern_in_text = len(re.split(result_pattern, post['text'])) != 1
-                if is_pattern_in_text:
-                    os.chdir(folder['title'])
-                    cur_dir = os.getcwd()
-                    found_folder = True
-
-            elif folder['queryMatch']:
-                is_pattern_in_text = len(re.split(folder['queryMatch'], post['text'])) != 1
-                is_prohibited_pattern_absent = len(re.split(folder['queryMatchNot'], post['text'])) == 1
-                if is_pattern_in_text and is_prohibited_pattern_absent:
-                    os.chdir(folder['title'])
-                    cur_dir = os.getcwd()
-                    found_folder = True
-            if found_folder:
-                break
-
-        if not found_folder:
-            os.chdir("Другое")
-            cur_dir = os.getcwd()
-
         print(os.getcwd())
 
         text = re.split('<br>', post['text'])
         folder_name = text[0]
-        # del text[0]
+
         readme = '\n'.join(text[1:])  # generating text for readme files
 
+        folder_group = get_foldergroup(folders, post)
+        folder_path = os.path.join(DOWNLOAD_FOLDER, folder_group, folder_name).strip(" ")
+
         try:
+            if not os.path.exists(folder_path):
+                print(os.listdir())
+                os.mkdir(os.path.join(folder_path))
 
-            if not os.path.exists(folder_name):
-                os.mkdir(folder_name)
+        except FileNotFoundError as e:
+            print("Folder Error", e)
 
-            os.chdir(folder_name)
-            changed_dir = True
-
-            cur_dir = os.getcwd()
-
-            for attch in attchs:
-                if attch['type'] == 'doc':
-                    # downloading book
-                    filename = attch['doc']['title']
-                    # making filename valid
-                    filename = "".join([x if x.isalnum() else "_" for x in filename])
-                    download(attch['doc']['url'], filename + "." + attch['doc']['ext'])
-                elif attch['type'] == 'photo':
-                    # downloading  preview image
-                    download(attch['photo']['src_big'], 'preview.jpg')
-                elif attch['type'] == 'link':
-                    # adding link
-                    readme = readme, '\n Ccылка: ', attch['link']['title'], ' ', attch['link']['url']
-                textfile = open('readme.txt', 'w', encoding='utf-8')
-                textfile.write(readme)
-            os.chdir('..')
-            cur_dir = os.getcwd()
-            os.chdir('..')
-            cur_dir = os.getcwd()
-
-        except:
-            os.chdir('..')
-            if changed_dir:
-                os.chdir('..')
-
-            raise
+        for attch in attchs:
+            if attch['type'] == 'doc':
+                # downloading book
+                filename = attch['doc']['title']
+                # making filename valid
+                filename = "".join([x if x.isalnum() else "_" for x in filename])
+                filename = filename + "." + attch['doc']['ext']
+                filename = os.path.join(folder_path, filename)
+                download(attch['doc']['url'], filename)
+            elif attch['type'] == 'photo':
+                # downloading  preview image
+                filename = os.path.join(folder_path, 'preview.jpg')
+                download(attch['photo']['src_big'], filename)
+            elif attch['type'] == 'link':
+                # adding link
+                readme = readme, '\n Ccылка: ', attch['link']['title'], ' ', attch['link']['url']
+            textfile = open(os.path.join(folder_path, 'readme.txt'), 'w', encoding='utf-8')
+            textfile.write(readme)
 
 if __name__ == "__main__":
     download_books()
