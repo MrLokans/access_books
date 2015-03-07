@@ -28,7 +28,7 @@ def download(url, file_name):
 
 # DONE move to separate file or DB
 # query is simple filter for text of post, queryMatch is RegEx filter for text of post, queryMatchNot is Regex antifilter
-folders_text = open('folders.json','r').read();
+folders_text = open('folders.json', 'r').read()
 folders = eval(folders_text)
 
 # creating folders
@@ -77,7 +77,6 @@ for post in posts:
             if not found_folder:
                 os.chdir("Другое")
                 cur_dir = os.getcwd()
-
 
             print(os.getcwd())
 
