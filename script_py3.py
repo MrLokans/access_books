@@ -123,6 +123,7 @@ def download_attachment(attch, folder_path, readme):
 # DONE creating separate folder
 # raising exception if folder are already created
 
+
 # TODO avoid changing current directory and use
 # preformed pathes instead.
 def download_books():
@@ -152,9 +153,14 @@ def download_books():
         if not isbook:
             continue
 
-        print(os.getcwd())
-
-        text = re.split('<br>', post['text'])
+        # print(os.getcwd())
+        if '<br>' in post['text']:
+            text = re.split('<br>', post['text'])
+        else:
+            # So sometimes we face the case that
+            # no <br> tag is in description, so we
+            # split by (year, type) group
+            text = re.split(r'\(([\d]{4}), ([a-zA-Z]+)\)', post['text'])
         folder_name = clear_filename(text[0])
 
         readme = '\n'.join(text[1:])  # generating text for readme files
@@ -164,7 +170,7 @@ def download_books():
 
         try:
             if not os.path.exists(folder_path):
-                os.mkdir(os.path.join(folder_path))
+                os.mkdir(folder_path)
 
         except FileNotFoundError as e:
             print("Folder Error", e)
