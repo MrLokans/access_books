@@ -19,7 +19,7 @@ def get_books_info(books_file="books.json"):
 
 def get_folders_info(folders_file="folders.json"):
     """Gets all data from folders file"""
-    with open('folders.json', 'r') as f:
+    with open('folders.json', 'r', encoding='utf-8') as f:
         folders_text = f.read()
         return json.loads(folders_text)
 
