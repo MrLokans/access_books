@@ -8,20 +8,15 @@ import sys
 
 # DONE with statement, json lib support
 DOWNLOAD_FOLDER = 'downloads'
+BOOKS_JSON = 'books.json'
+FOLDERS_JSON = 'folders.json'
 
 
-def get_books_info(books_file="books.json"):
-    """Gets all data from books file"""
-    with open('books.json', 'r', encoding='utf-8') as f:
-        books_text = f.read()
-        return json.loads(books_text)
-
-
-def get_folders_info(folders_file="folders.json"):
-    """Gets all data from folders file"""
-    with open('folders.json', 'r', encoding='utf-8') as f:
-        folders_text = f.read()
-        return json.loads(folders_text)
+def gen_dict_from_json(file_name):
+    """Returns dict from json file"""
+    with open(file_name, 'r', encoding="utf-8") as f:
+        text = f.read()
+        return json.loads(text)
 
 
 def prepare_folders(folders):
@@ -127,8 +122,8 @@ def download_attachment(attch, folder_path, readme):
 # TODO avoid changing current directory and use
 # preformed pathes instead.
 def download_books():
-    posts = get_books_info()
-    folders = get_folders_info()
+    posts = gen_dict_from_json(BOOKS_JSON)
+    folders = gen_dict_from_json(FOLDERS_JSON)
     prepare_folders(folders)
 
     # TODO REFACTOR TO FUCKOUT
