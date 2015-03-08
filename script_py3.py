@@ -66,6 +66,13 @@ def download(url, file_name):
     print(file_name + ' was downloaded.')
 
 
+def clear_filename(file_name):
+    if "/" in file_name:
+        return file_name.replace("/", "-")
+    else:
+        return file_name
+
+
 def get_foldergroup(folders_dict, post):
     """Specifies group folder (e.g C, C++, or 'Другое') """
     folder_group = ""
@@ -97,7 +104,7 @@ def download_attachment(attch, folder_path, readme):
     """Downloads attachment according to its type"""
     if attch['type'] == 'doc':
         # downloading book
-        filename = attch['doc']['title']
+        filename = clear_filename(attch['doc']['title'])
         # making filename valid
         filename = "".join([x if x.isalnum() else "_" for x in filename])
         filename = filename + "." + attch['doc']['ext']
@@ -124,6 +131,8 @@ def download_books():
     prepare_folders(folders)
 
     # TODO REFACTOR TO FUCKOUT
+    # It's broken when filename contains '/' symbol,
+    # so this symbol is now replaced.
     for post in posts:
         post.setdefault('attachments', 0)
         attchs = post['attachments']
@@ -146,7 +155,7 @@ def download_books():
         print(os.getcwd())
 
         text = re.split('<br>', post['text'])
-        folder_name = text[0]
+        folder_name = clear_filename(text[0])
 
         readme = '\n'.join(text[1:])  # generating text for readme files
 
@@ -155,7 +164,6 @@ def download_books():
 
         try:
             if not os.path.exists(folder_path):
-                print(os.listdir())
                 os.mkdir(os.path.join(folder_path))
 
         except FileNotFoundError as e:
