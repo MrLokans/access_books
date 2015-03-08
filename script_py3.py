@@ -37,7 +37,7 @@ def prepare_folders(folders):
 
 
 # DONE with statement, status bar
-# ???
+# Fix progress bar, shows extra percents
 def download(url, file_name):
     u = urllib.request.urlopen(url)
 
@@ -93,6 +93,25 @@ def get_foldergroup(folders_dict, post):
     return folder_group
 
 
+def download_attachment(attch, folder_path, readme):
+    """Downloads attachment according to its type"""
+    if attch['type'] == 'doc':
+        # downloading book
+        filename = attch['doc']['title']
+        # making filename valid
+        filename = "".join([x if x.isalnum() else "_" for x in filename])
+        filename = filename + "." + attch['doc']['ext']
+        filename = os.path.join(folder_path, filename)
+        download(attch['doc']['url'], filename)
+    elif attch['type'] == 'photo':
+        # downloading  preview image
+        filename = os.path.join(folder_path, 'preview.jpg')
+        download(attch['photo']['src_big'], filename)
+    elif attch['type'] == 'link':
+        # adding link
+        readme = readme, '\n Ccылка: ', attch['link']['title'], ' ', attch['link']['url']
+    textfile = open(os.path.join(folder_path, 'readme.txt'), 'w', encoding='utf-8')
+    textfile.write(readme)
 # creating folders
 # DONE creating separate folder
 # raising exception if folder are already created
@@ -143,23 +162,6 @@ def download_books():
             print("Folder Error", e)
 
         for attch in attchs:
-            if attch['type'] == 'doc':
-                # downloading book
-                filename = attch['doc']['title']
-                # making filename valid
-                filename = "".join([x if x.isalnum() else "_" for x in filename])
-                filename = filename + "." + attch['doc']['ext']
-                filename = os.path.join(folder_path, filename)
-                download(attch['doc']['url'], filename)
-            elif attch['type'] == 'photo':
-                # downloading  preview image
-                filename = os.path.join(folder_path, 'preview.jpg')
-                download(attch['photo']['src_big'], filename)
-            elif attch['type'] == 'link':
-                # adding link
-                readme = readme, '\n Ccылка: ', attch['link']['title'], ' ', attch['link']['url']
-            textfile = open(os.path.join(folder_path, 'readme.txt'), 'w', encoding='utf-8')
-            textfile.write(readme)
-
+            download_attachment(attch, folder_path, readme)
 if __name__ == "__main__":
     download_books()
