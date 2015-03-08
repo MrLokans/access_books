@@ -99,7 +99,7 @@ def download_attachment(attch, folder_path, readme):
     """Downloads attachment according to its type"""
     if attch['type'] == 'doc':
         # downloading book
-        filename = clear_filename(attch['doc']['title'])
+        filename = attch['doc']['title']
         # making filename valid
         filename = "".join([x if x.isalnum() else "_" for x in filename])
         filename = filename + "." + attch['doc']['ext']
@@ -111,7 +111,7 @@ def download_attachment(attch, folder_path, readme):
         download(attch['photo']['src_big'], filename)
     elif attch['type'] == 'link':
         # adding link
-        readme = readme, '\n Ccылка: ', attch['link']['title'], ' ', attch['link']['url']
+        readme = " ".join([readme, '\n Ccылка: ', attch['link']['title'], ' ', attch['link']['url']])
     textfile = open(os.path.join(folder_path, 'readme.txt'), 'w', encoding='utf-8')
     textfile.write(readme)
 # creating folders
@@ -160,7 +160,7 @@ def download_books():
 
         readme = '\n'.join(text[1:])  # generating text for readme files
 
-        folder_group = get_foldergroup(folders, post)
+        folder_group = clear_filename(get_foldergroup(folders, post))
         folder_path = os.path.join(DOWNLOAD_FOLDER, folder_group, folder_name).strip(" ")
 
         try:
