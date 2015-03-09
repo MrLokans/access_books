@@ -98,6 +98,7 @@ def download(url, file_name):
             chunk = u.read(chunk_size)
             extra_time = time.time()
             delta_time = extra_time - start_time
+            delta_time = delta_time if delta_time else 0.0001
             avg_speed = int(chunks_downloaded * chunk_size / delta_time)
             str_info = transform_speed_value(avg_speed)
             draw_progress_bar(chunks_downloaded, chunks, extra_info=str_info)
@@ -221,5 +222,6 @@ def download_books():
 
         for attch in attchs:
             download_attachment(attch, folder_path, readme)
+
 if __name__ == "__main__":
     download_books()
