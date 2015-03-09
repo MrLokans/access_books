@@ -54,6 +54,7 @@ def draw_progress_bar(cur_value, max_value, width=72, symbol='#', extra_info="")
                                                                          minuses='-' * num_of_minuses,
                                                                          percentage=current_progress,
                                                                          info=extra_info))
+    sys.stdout.flush()
 
 
 def gen_dict_from_json(file_name):
