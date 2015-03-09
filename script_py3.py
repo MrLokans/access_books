@@ -5,11 +5,55 @@ import re
 import os
 import json
 import sys
+import time
+
 
 # DONE with statement, json lib support
 DOWNLOAD_FOLDER = 'downloads'
 BOOKS_JSON = 'books.json'
 FOLDERS_JSON = 'folders.json'
+
+
+def transform_speed_value(current_speed, suffix_type='speed'):
+    """Transforms data into human readable format"""
+
+    speed_suffixes = ['bps', 'kbps', 'mbps', 'gbps', 'tbps']
+    size_suffixes = ['B', 'KB', 'MB', 'GB', 'TB']
+
+    if suffix_type == 'speed':
+        suffixes = speed_suffixes
+    elif suffix_type == 'size':
+        suffixes = size_suffixes
+    else:
+        raise TypeError("Incorrect suffix type {}.".format(suffix_type))
+
+    if current_speed == 0:
+        return 0
+    i = 0
+    while current_speed >= 1024 and i < len(suffixes) - 1:
+        current_speed /= 1024
+        i += 1
+    return "{:.2f} {}".format(current_speed, suffixes[i])
+
+
+def calculate_speed(time_spent, data_downloaded):
+    """Returns average download speed"""
+    return int(data_downloaded / time_spent)
+
+
+def draw_progress_bar(cur_value, max_value, width=72, symbol='#', extra_info=""):
+    """Draws progress, evidently"""
+    current_progress = int((cur_value * 100) / max_value)
+
+    effective_width = width - 2
+
+    num_of_hashes = int((cur_value * effective_width) / max_value)
+    num_of_minuses = effective_width - num_of_hashes
+
+    sys.stdout.write('\r[{hashes}{minuses}] {percentage}% {info}'.format(hashes=symbol * num_of_hashes,
+                                                                         minuses='-' * num_of_minuses,
+                                                                         percentage=current_progress,
+                                                                         info=extra_info))
 
 
 def gen_dict_from_json(file_name):
@@ -46,12 +90,17 @@ def download(url, file_name):
     chunk_size = 1024
     chunks = file_size // chunk_size
     chunks_downloaded = 0
-    print("Downloading {}, {} bytes.".format(file_name, file_size))
+    print("Downloading {filename}, {size}.".format(filename=file_name,
+                                                   size=transform_speed_value(file_size, suffix_type='size')))
     with open(file_name, 'wb') as f:
+        start_time = time.time()
         while True:
             chunk = u.read(chunk_size)
-            percent = int(chunks_downloaded / chunks * 100)
-            sys.stdout.write('\r [{0}] {1}%'.format('#' * int(percent / 10), percent))
+            extra_time = time.time()
+            delta_time = extra_time - start_time
+            avg_speed = int(chunks_downloaded * chunk_size / delta_time)
+            str_info = transform_speed_value(avg_speed)
+            draw_progress_bar(chunks_downloaded, chunks, extra_info=str_info)
             if not chunk:
                 break
             f.write(chunk)
