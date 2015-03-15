@@ -14,6 +14,48 @@ BOOKS_JSON = 'books.json'
 FOLDERS_JSON = 'folders.json'
 
 
+class ProgressBar(object):
+
+    def __init__(self, max_value, fill_character="#", rem_character="-", update_time=0.04, width=80):
+        self.cur_value = 0
+        self.max_value = max_value
+        self.fill_char = fill_character
+        self.rem_char = rem_character
+        self.width = width
+
+        self.update_time = update_time
+        self.effective_width = self.width - 2
+        self.start_time = time.time()
+
+        self.print_bar(cur_value=0)
+
+    def update(self, cur_value, extra_text=""):
+        if cur_value > self.max_value + 1:
+            raise ValueError("Update value is too big.")
+
+        if cur_value == self.max_value:
+            self.print_bar(cur_value=self.max_value, extra_text=extra_text)
+
+        self.cur_time = time.time()
+        self.cur_value = cur_value
+        self.delt_t = self.cur_time - self.start_time
+        if self.delt_t >= self.update_time:
+            self.print_bar(self.cur_value, extra_text=extra_text)
+            self.start_time = self.cur_time
+            self.cur_time = time.time()
+
+    def print_bar(self, cur_value, extra_text=""):
+        ratio = cur_value / self.max_value
+        current_progress = int(ratio * 100)
+        num_of_hashes = int(ratio * self.effective_width)
+        num_of_minuses = self.effective_width - num_of_hashes
+        sys.stdout.write('\r[{hashes}{minuses}] {percentage}% {info}'.format(hashes=self.fill_char * num_of_hashes,
+                                                                             minuses='-' * num_of_minuses,
+                                                                             percentage=current_progress,
+                                                                             info=extra_text))
+        sys.stdout.flush()
+
+
 def transform_speed_value(current_speed, suffix_type='speed'):
     """Transforms data into human readable format"""
 
@@ -93,6 +135,7 @@ def download(url, file_name):
     chunks_downloaded = 0
     print("Downloading {filename}, {size}.".format(filename=file_name,
                                                    size=transform_speed_value(file_size, suffix_type='size')))
+    pb = ProgressBar(max_value=chunks)
     with open(file_name, 'wb') as f:
         start_time = time.time()
         while True:
@@ -102,7 +145,8 @@ def download(url, file_name):
             delta_time = delta_time if delta_time else 0.0001
             avg_speed = int(chunks_downloaded * chunk_size / delta_time)
             str_info = transform_speed_value(avg_speed)
-            draw_progress_bar(chunks_downloaded, chunks, extra_info=str_info)
+            # draw_progress_bar(chunks_downloaded, chunks, extra_info=str_info)
+            pb.update(cur_value=chunks_downloaded, extra_text=str_info)
             if not chunk:
                 break
             f.write(chunk)
@@ -226,3 +270,8 @@ def download_books():
 
 if __name__ == "__main__":
     download_books()
+    # p = ProgressBar(999)
+    # for i in range(100):
+    #     time.sleep(0.01)
+    #     p.update(i)
+    # p.print_bar(cur_value=1000)
